@@ -8,16 +8,6 @@ from sklearn.metrics import mean_absolute_error
 from orange.src.dataloader.dataloader import create_data_loader
 from orange.src.model.NLinear import NLinear, LitNLinear
 
-#%%
-"""
-   ['target', '0.75_16', '0.5_16', '0.25_16', 'stl_trend',
-   'stl_seasonal', 'stl_residual', 'sd_m_trend', 'sd_m_seasonal',
-   'sd_m_residual', 'sd_a_trend', 'sd_a_seasonal', 'sd_a_residual',
-   'smooth_week', 'smooth_month', 'smooth_2_month', 'smooth_6_month',
-   '평균강수량(mm)', '강수일수비율', '평균기온(℃)', '최저기온(℃)', '최고기온(℃)', '평균풍속(m/s)',
-   '최대풍속(m/s)', '평균습도(%rh)', '최저습도(%rh)', '일조합(hr)', '일조율(%)',
-   '일사합(MJ/m2)', 'holiday', 'sin', 'cos', 't', 'month', 'year', 'covid']
-"""
 
 SEQ=365
 PRED=365

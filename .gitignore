@@ -1,5 +1,4 @@
 /data/config.py
-/data/*.csv
 
 /src/lightning_logs
 
