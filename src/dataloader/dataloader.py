@@ -7,25 +7,25 @@ from torch.utils.data import DataLoader
 
 def data_provider(args, flag):
     """Create Dataloader"""
-    if args.flag == 'pred':
+    if flag == 'pred':
         shuffle_flag = False
         drop_last = False
         batch_size = 1
         Data = TimeSeriesPred
     else:  # args.flag in ['train', 'val', 'test']
-        shuffle_flag = True
+        shuffle_flag = args.shuffle
         drop_last = True
         batch_size = args.batch_size
         Data = TimeSeries
 
     data_set = Data(
         data_path=args.data_path,
-        flag=args.flag,
+        flag=flag,
         features=args.features,
         target=args.target,
         scale=args.scale,
         size=[args.seq_len, args.label_len, args.pred_len],
-        cols=[args.cols]
+        cols=args.cols
     )
 
     ic.ic(flag, len(data_set))
@@ -37,4 +37,4 @@ def data_provider(args, flag):
         num_workers=args.num_workers,
         drop_last=drop_last)
 
-    return data_set, data_loader
+    return data_loader

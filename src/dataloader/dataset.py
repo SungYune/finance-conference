@@ -5,7 +5,9 @@ import warnings
 from typing import List
 
 import pandas as pd
+from icecream import icecream
 from sklearn.preprocessing import StandardScaler
+import torch
 from torch import from_numpy
 from torch.utils.data import Dataset, DataLoader
 
@@ -23,8 +25,6 @@ class TimeSeries(Dataset):
                  cols=None
                  ):
         # size [seq_len, label_len, pred_len]
-        if cols is None:
-            cols = []
         if size is None:
             self.seq_len   = 28
             self.label_len = 7  # Decoder Input for Transformers (Decoder Attention)
@@ -39,6 +39,7 @@ class TimeSeries(Dataset):
 
         self.data_path = data_path
         self.cols = cols
+
         purpose_map = {'train': 0, 'val': 1, 'test': 2}
         self.dataset_purpose = purpose_map[flag]
 
@@ -53,7 +54,7 @@ class TimeSeries(Dataset):
         self.scaler = StandardScaler()
 
         # Read data
-        df_raw = pd.read_csv(self.data_path) # df_raw.columns: ['date', ...(other features), target feature]
+        df_raw = pd.read_csv(self.data_path)  # df_raw.columns: ['date', ...(other features), target feature]
 
         # Rearrange Columns with Intended Order
         if self.cols:
@@ -72,6 +73,9 @@ class TimeSeries(Dataset):
             cols.remove('date')
 
         df_raw = df_raw[['date'] + cols + [self.target]]
+
+        if df_raw.isna().sum().sum() > 0:
+            df_raw = df_raw.interpolate(method='linear', axis=0).ffill().bfill()
 
         # Get how many data in train, val, test
         num_train = int(len(df_raw) * 0.7)
@@ -129,7 +133,11 @@ class TimeSeries(Dataset):
         seq_x_mark = self.data_stamp[seq_begin:seq_end]  # Date Information
         seq_y_mark = self.data_stamp[lap_begin:lap_end]
 
-        return seq_x, seq_y, seq_x_mark, seq_y_mark
+        batch = {'X': from_numpy(seq_x).to(torch.float32),
+                 'y': from_numpy(seq_y).to(torch.float32),
+                 'X_mark': seq_x_mark,
+                 'y_mark': seq_y_mark}
+        return batch
 
     def __len__(self):
         return len(self.data_x) - self.seq_len - self.pred_len + 1
@@ -244,8 +252,8 @@ class TimeSeriesPred(Dataset):
         seq_x_mark = self.data_stamp[seq_begin:seq_end]
         seq_y_mark = self.data_stamp[lap_begin:lap_end]
 
-        batch = {'X': from_numpy(seq_x).float(),
-                 'y': from_numpy(seq_y).float(),
+        batch = {'X': from_numpy(seq_x).to(torch.float32),
+                 'y': from_numpy(seq_y).to(torch.float21),
                  'X_mark': seq_x_mark,
                  'y_mark': seq_y_mark}
 
