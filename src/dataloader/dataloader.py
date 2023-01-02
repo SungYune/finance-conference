@@ -12,10 +12,15 @@ def data_provider(args, flag):
         drop_last = False
         batch_size = 1
         Data = TimeSeriesPred
-    else:  # args.flag in ['train', 'val', 'test']
+    elif flag in ['train', 'val']:
         shuffle_flag = args.shuffle
         drop_last = True
         batch_size = args.batch_size
+        Data = TimeSeries
+    else:  # flag == 'test'
+        shuffle_flag = False
+        drop_last = True
+        batch_size = 1
         Data = TimeSeries
 
     data_set = Data(

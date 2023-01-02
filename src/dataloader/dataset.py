@@ -154,7 +154,7 @@ class TimeSeriesPred(Dataset):
                  target: str = 'Low',
                  scale: bool = True,
                  size=None,
-                 cols: List = []
+                 cols=None,
                  ):
         # size [seq_len, label_len, pred_len]
         if size is None:
@@ -172,7 +172,7 @@ class TimeSeriesPred(Dataset):
         self.data_path = data_path
         self.cols = cols
 
-        purpose_map = {'train': 0, 'val': 1, 'test': 2}
+        purpose_map = {'pred': 3}
         self.dataset_purpose = purpose_map[flag]
 
         self.features = features
@@ -223,7 +223,7 @@ class TimeSeriesPred(Dataset):
 
         tmp_stamp = df_raw[['date']][border_start:border_end]
         tmp_stamp['date'] = pd.to_datetime(tmp_stamp.date)
-        pred_dates = pd.date_range(tmp_stamp.date.values[-1], periods=self.pred_len + 1, freq=self.freq)
+        pred_dates = pd.date_range(tmp_stamp.date.values[-1], periods=self.pred_len + 1, freq="1D")
 
         df_stamp = pd.DataFrame(columns=['date'])
 
@@ -253,7 +253,7 @@ class TimeSeriesPred(Dataset):
         seq_y_mark = self.data_stamp[lap_begin:lap_end]
 
         batch = {'X': from_numpy(seq_x).to(torch.float32),
-                 'y': from_numpy(seq_y).to(torch.float21),
+                 'y': from_numpy(seq_y).to(torch.float32),
                  'X_mark': seq_x_mark,
                  'y_mark': seq_y_mark}
 

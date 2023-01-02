@@ -7,9 +7,7 @@ import torch
 import random
 import numpy as np
 
-from src.train_files.serial_forecasting.train_serial import train
-
-
+from src.train_files.serial_forecasting.lightning_train import train
 
 
 def parse():
@@ -40,21 +38,18 @@ def parse():
     parser.add_argument('--checkpoints', type=str, default='./checkpoints/', help='location of model checkpoints')
 
     # forecasting task
-    parser.add_argument('--seq_len', type=int, default=96*4, help='input sequence length')
+    parser.add_argument('--seq_len', type=int, default=96 * 4, help='input sequence length')
     parser.add_argument('--label_len', type=int, default=48, help='start token length')
     parser.add_argument('--pred_len', type=int, default=96, help='prediction sequence length')
 
     # optimization
     parser.add_argument('--epoch', type=int, default=10, help='number of epochs')
     parser.add_argument('--num_workers', type=int, default=0, help='data loader num workers')
-    parser.add_argument('--itr', type=int, default=2, help='experiments times')
     parser.add_argument('--train_epochs', type=int, default=10, help='train epochs')
     parser.add_argument('--batch_size', type=int, default=32, help='batch size of train input data')
-    parser.add_argument('--patience', type=int, default=3, help='early stopping patience')
     parser.add_argument('--weight_decay', type=float, default=0.0001, help='optimizer weight decay')
     parser.add_argument('--learning_rate', type=float, default=0.0001, help='optimizer learning rate')
     parser.add_argument('--auto_lr_find', type=bool, default=True, help='whether to use auto lr finder of lighrning')
-    parser.add_argument('--des', type=str, default='test', help='exp description')
     parser.add_argument('--loss', type=str, default='mse', help='loss function')
     parser.add_argument('--lradj', type=str, default='type1', help='adjust learning rate')
     parser.add_argument('--use_amp', action='store_true', help='use automatic mixed precision training', default=False)
@@ -69,10 +64,13 @@ if __name__ == "__main__":
     print(os.getcwd())
 
     args = parse()
-    args.exp_dir = f'src/lightning_logs/{args.model_id}/{args.model_arch_desc}'
-    if not os.path.exists(exp_path := Path(args.exp_dir + '/lightning_logs')):
-        os.makedirs(exp_path)
+    args.exp_dir = f'src/lightning_logs/{args.model_id}'
+    if not os.path.exists(Path(args.exp_dir)):
+        os.makedirs(Path(args.exp_dir))
     train(args)
+
+    # os.system(f"tensorboard --logdir=src/lightning_logs/{args.model_id}/{args.model_arch_desc}")
+    # os.system()
     #
     # if args.is_training:
     #     for ii in range(args.itr):
