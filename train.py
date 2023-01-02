@@ -1,4 +1,5 @@
 import argparse
+import json
 import os
 import random
 from pathlib import Path
@@ -20,7 +21,6 @@ def parse():
     parser.add_argument('--model_id', type=str, required=True, default='test', help='model id')
     parser.add_argument('--model_arch_desc', type=str, required=True, default='basic',
                         help='brief description of model architecture')
-    parser.add_argument('--run_tensorboard', type=bool, default=False, help='rather to use tensorboard')
 
     # data loader
     parser.add_argument('--data_path', type=str, default='data/forex/nasdaq.csv', help='data file')
@@ -75,6 +75,3 @@ if __name__ == "__main__":
     if not os.path.exists(Path(args.exp_dir)):
         os.makedirs(Path(args.exp_dir))
     train(args)
-
-    if args.run_tensorboard:
-        os.system(f"tensorboard --logdir=src/lightning_logs/{args.model_id}/{args.model_arch_desc}")

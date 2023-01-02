@@ -1,3 +1,5 @@
+import os
+
 import pandas as pd
 import matplotlib.pyplot as plt
 from icecream import ic
@@ -19,7 +21,7 @@ def to_data_frame(args, pred, label, y_mark):
     return df
 
 
-def visualizer(args, predictions):
+def visualizer(args, predictions, version):
     # predictions is a list of (output, y, y_mark)
     # and each output and y has shape (batch_size, pred_len, num_features)
     # X_mark and y_mark are the corresponding time stamps
@@ -35,4 +37,10 @@ def visualizer(args, predictions):
         plt.plot(df['pred'], label='pred')
         plt.plot(df['label'], label='true')
         plt.legend()
+
+    path_to_save = os.path.join(
+        f'src/lightning_logs/{args.model_id}/{args.model_arch_desc}',
+        f'version_{version}',
+        'result.png')
+    plt.savefig(path_to_save)
     plt.show()

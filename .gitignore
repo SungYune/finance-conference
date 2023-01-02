@@ -1,7 +1,9 @@
 /data/config.py
 
-/src/lightning_logs
 
 *.xml
 *.iml
 .idea
+*.local
+*.ckpt
+*.yaml

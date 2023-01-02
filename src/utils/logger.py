@@ -8,5 +8,4 @@ def logger_provider(args):
         save_dir=args.exp_dir,
         name=args.model_arch_desc
     )
-    return logger
-
+    return logger, logger.version

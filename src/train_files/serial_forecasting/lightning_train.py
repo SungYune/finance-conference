@@ -8,6 +8,7 @@ from src.train_files.serial_forecasting.LitModel import LitModel
 
 from src.utils.logger import logger_provider
 from src.utils.visualizer import visualizer
+from src.utils.arg_saver import arg_saver
 
 
 def build_model(args):
@@ -27,7 +28,7 @@ def train(args):
     test_loader  = data_provider(args, flag='test')
 
     model = build_model(args)
-    logger = logger_provider(args)
+    logger, version = logger_provider(args)
 
     # train model
     trainer = pl.Trainer(
@@ -45,4 +46,5 @@ def train(args):
                 )
 
     pred = trainer.predict(dataloaders=test_loader)
-    visualizer(args, pred)
+    visualizer(args, pred, version)
+    arg_saver(args, version)
